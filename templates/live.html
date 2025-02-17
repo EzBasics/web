@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Twitch Stream</title>
+    <script src="https://embed.twitch.tv/embed/v1.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: verdana;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 100px;
+            min-height: 100vh;
+        }
+                /* Adding a background image with opacity */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-image: url("court.png");
+            opacity: 0.7; /* Adjust the opacity of the background */
+            z-index: -1; /* Ensures the background stays behind the content */
+        }
+
+
+
+
+        
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Spread out elements */
+            background: #fff;
+            padding: 12px 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+            width: 60%;
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+        }
+
+        /* Containers for left links, logo, and right links */
+        .nav-container {
+            display: flex;
+            flex: 0.7; /* Ensures equal spacing */
+        }
+        .nav-container.left {
+            justify-content: flex-end; /* Moves left links towards the logo */
+        }
+
+        .nav-container.right {
+            justify-content: flex-start; /* Moves right links towards the logo */
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            list-style: none;
+            gap: 15px; /* Increase space between nav links */
+        }
+        .nav-links li {
+            margin: 0 10px;
+        }
+
+        .nav-links li a {
+            position: relative;
+            color: #333;
+            font-family: system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-size: 1.8rem;
+            font-weight: 500;
+            padding: 6px 0;
+            text-decoration: none;
+        }
+
+        .nav-links li a:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: #007BFF;
+            border-radius: 12px;
+            transition: all 0.4s ease;
+        }
+
+        .nav-links li a:hover:before {
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 0.15; /* Reduce logo spacing */
+            transform: scale(1.3);
+        }
+
+        /* Logo hover effect */
+        .logo img {
+            width: 50px;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .logo img:hover {
+            transform: scale(1.8);
+        }
+
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 120px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            #twitch-embed {
+                max-width: 100%;
+            }
+        }
+
+        .stream-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            padding: 5px;
+            width: 100%;
+            max-width: 960px;
+            text-align: center;
+        }
+
+        .stream-card {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 500px; /* Increase height */
+            min-height: 220px;
+            width: 100%; /* Make them take full width */
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .stream-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            background-color: rgba(43, 137, 245, 0.6);
+        }
+                /* Adjusting the container to prevent it from overlapping the fixed navbar */
+        .container {
+            margin-top: 50px; /* Space for the navbar */
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 960px; /* Smaller container width */
+            text-align: center;
+            overflow-y: auto; /* Enable vertical scroll if content overflows */
+            max-height: 80vh; /* Ensure the content fits inside the viewport */
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-top: 25px;
+            
+        }
+
+        
+    </style>
+</head>
+<body>
+
+
+    <div class="navbar">
+        <!-- Left-side navigation -->
+        <div class="nav-container left">
+            <ul class="nav-links">
+                <li><a href="index.html">Roster</a></li>
+                <li><a href="#">Coach</a></li>
+            </ul>
+        </div>
+    
+        <!-- Logo in the center -->
+        <div class="logo">
+            <a>
+                <img src="logo.png" alt="Logo">
+            </a>
+        </div>
+        
+    
+        <!-- Right-side navigation -->
+        <div class="nav-container right">
+            <ul class="nav-links">
+                <li><a href="live.html">Live</a></li>
+                <li><a href="schedule.html">Schedule</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stream-cards">
+            <h1>Court 1</h1>
+            <div class="stream-card" id="twitch-embed1"></div>
+            <h1>Court 2</h1>
+            <div class="stream-card" id="twitch-embed2"></div>
+            <h1>Court 3</h1>
+            <div class="stream-card" id="twitch-embed3"></div>
+        </div>
+    </div>
+   
+    
+
+    <script>
+        new Twitch.Embed("twitch-embed1", {
+            width: "100%",
+            height: "500px",
+            channel: "connsquash1",
+            parent: ["localhost"], // Update with your domain when live
+            layout: "video"
+        });
+
+        new Twitch.Embed("twitch-embed2", {
+            width: "100%",
+            height: "500px",
+            channel: "connsquash2",
+            parent: ["localhost"], // Update with your domain when live
+            layout: "video"
+        });
+
+        new Twitch.Embed("twitch-embed3", {
+            width: "100%",
+            height: "500px",
+            channel: "connsquash3",
+            parent: ["localhost"], // Update with your domain when live
+            layout: "video"
+        });
+    </script>
+
+    
+
+</body>
+</html>
