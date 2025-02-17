@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>CCSquash - Standings</title>
   <link rel="icon" type="image/png" sizes="32x32" href="ccsquash.jpg"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Raleway:wght@600&display=swap" rel="stylesheet">
   <style>
     /* General reset */
     * {
@@ -12,6 +13,17 @@
       padding: 0;
       box-sizing: border-box;
     }
+
+    .connecticut-college {
+        font-family: 'Raleway', sans-serif;
+        font-size: 2rem;
+        font-weight: bold;
+        background: linear-gradient(to right, #007BFF, #007BFF);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
     /* Body styles */
     body {
       font-family: 'Arial', sans-serif;
@@ -294,6 +306,9 @@
       }
       const nameSpan = document.createElement("span");
       nameSpan.textContent = team.Teamname;
+      if (team.Teamname === "Connecticut College") {
+        nameSpan.classList.add("connecticut-college");
+      }
       teamDiv.appendChild(nameSpan);
       teamTd.appendChild(teamDiv);
       tr.appendChild(teamTd);

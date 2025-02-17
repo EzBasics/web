@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Twitch Stream</title>
+    <title>CCSquash - Live</title>
     <script src="https://embed.twitch.tv/embed/v1.js"></script>
     <link rel="icon" type="image/png" sizes="32x32" href="ccsquash.jpg"/>
     <style>
@@ -22,7 +22,8 @@
             padding-top: 100px;
             min-height: 100vh;
         }
-                /* Adding a background image with opacity */
+
+        /* Background image */
         body::before {
             content: '';
             position: absolute;
@@ -32,18 +33,14 @@
             height: 100%;
             background-size: cover;
             background-image: url("court.png");
-            opacity: 0.7; /* Adjust the opacity of the background */
-            z-index: -1; /* Ensures the background stays behind the content */
+            opacity: 0.7;
+            z-index: -1;
         }
 
-
-
-
-        
         .navbar {
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Spread out elements */
+            justify-content: space-between;
             background: #fff;
             padding: 12px 40px;
             border-radius: 12px;
@@ -56,25 +53,26 @@
             z-index: 1000;
         }
 
-        /* Containers for left links, logo, and right links */
         .nav-container {
             display: flex;
-            flex: 0.7; /* Ensures equal spacing */
+            flex: 0.7;
         }
+
         .nav-container.left {
-            justify-content: flex-end; /* Moves left links towards the logo */
+            justify-content: flex-end;
         }
 
         .nav-container.right {
-            justify-content: flex-start; /* Moves right links towards the logo */
+            justify-content: flex-start;
         }
 
         .nav-links {
             display: flex;
             align-items: center;
             list-style: none;
-            gap: 15px; /* Increase space between nav links */
+            gap: 15px;
         }
+
         .nav-links li {
             margin: 0 10px;
         }
@@ -82,38 +80,21 @@
         .nav-links li a {
             position: relative;
             color: #333;
-            font-family: system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            font-family: system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
             font-size: 1.8rem;
             font-weight: 500;
             padding: 6px 0;
             text-decoration: none;
         }
 
-        .nav-links li a:before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            width: 0%;
-            background: #007BFF;
-            border-radius: 12px;
-            transition: all 0.4s ease;
-        }
-
-        .nav-links li a:hover:before {
-            width: 100%;
-        }
-
         .logo {
             display: flex;
             justify-content: center;
             align-items: center;
-            flex: 0.15; /* Reduce logo spacing */
+            flex: 0.15;
             transform: scale(1.3);
         }
 
-        /* Logo hover effect */
         .logo img {
             width: 50px;
             height: auto;
@@ -123,7 +104,6 @@
         .logo img:hover {
             transform: scale(1.8);
         }
-
 
         @media (max-width: 768px) {
             body {
@@ -137,6 +117,7 @@
             }
         }
 
+        /* Stream cards */
         .stream-cards {
             display: flex;
             flex-direction: column;
@@ -147,6 +128,16 @@
             text-align: center;
         }
 
+        .stream-cards.side-by-side {
+            flex-direction: row; /* Makes streams appear side by side */
+            justify-content: space-between; /* Space out the cards */
+        }
+
+        .stream-cards.side-by-side .court-title {
+            margin-bottom: 10px; /* Add space between title and stream */
+        }
+
+        
         .stream-card {
             background-color: #fff;
             padding: 25px;
@@ -158,31 +149,36 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 500px; /* Increase height */
+            height: 500px;
             min-height: 220px;
-            width: 100%; /* Make them take full width */
+            width: 100%;
             cursor: pointer;
-            text-decoration: none;
             position: relative;
             overflow: hidden;
         }
+
+        /* Adjust width when side by side */
+        .stream-cards.side-by-side .stream-card {
+            width: 30%; /* Set each stream card to take 30% of the container width */
+        }
+
         .stream-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             background-color: rgba(43, 137, 245, 0.6);
         }
-                /* Adjusting the container to prevent it from overlapping the fixed navbar */
+
         .container {
-            margin-top: 50px; /* Space for the navbar */
+            margin-top: 50px;
             background-color: #fff;
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
-            max-width: 960px; /* Smaller container width */
+            max-width: 960px;
             text-align: center;
-            overflow-y: auto; /* Enable vertical scroll if content overflows */
-            max-height: 80vh; /* Ensure the content fits inside the viewport */
+            overflow-y: auto;
+            max-height: 80vh;
         }
 
         .container::-webkit-scrollbar {
@@ -193,57 +189,80 @@
             font-size: 1.8rem;
             color: #333;
             margin-top: 25px;
-            
         }
 
-        
+        /* Button styling */
+        .toggle-button {
+            background-color: #007BFF;
+            color: white;
+            font-size: 1.2rem;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+            border: none;
+        }
+
+        .toggle-button:hover {
+            background-color: #0056b3;
+        }
+
+        .toggle-button:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
-
-
     <div class="navbar">
         <!-- Left-side navigation -->
         <div class="nav-container left">
-          <ul class="nav-links">
-            <li><a href="index.html">Roster</a></li>
-            <li><a href="standings.html">Standings</a></li>
-          </ul>
+            <ul class="nav-links">
+                <li><a href="index.html">Roster</a></li>
+                <li><a href="standings.html">Standings</a></li>
+            </ul>
         </div>
         <!-- Logo in the center -->
         <div class="logo">
-          <a>
-            <img src="logo.png" alt="Logo" />
-          </a>
+            <a>
+                <img src="logo.png" alt="Logo" />
+            </a>
         </div>
         <!-- Right-side navigation -->
         <div class="nav-container right">
-          <ul class="nav-links">
-            <li><a href="live.html">Live</a></li>
-            <li><a href="schedule.html">Schedule</a></li>
-          </ul>
+            <ul class="nav-links">
+                <li><a href="live.html">Live</a></li>
+                <li><a href="schedule.html">Schedule</a></li>
+            </ul>
         </div>
-      </div>
+    </div>
 
     <div class="container">
-        <div class="stream-cards">
-            <h1>Court 1</h1>
+        <button class="toggle-button" id="toggle-layout">Switch to Side-by-Side</button>
+        <div class="stream-cards" id="stream-cards">
+            <div class="court-title">
+                <h1>Court 1</h1>
+            </div>
             <div class="stream-card" id="twitch-embed1"></div>
-            <h1>Court 2</h1>
+
+            <div class="court-title">
+                <h1>Court 2</h1>
+            </div>
             <div class="stream-card" id="twitch-embed2"></div>
-            <h1>Court 3</h1>
+
+            <div class="court-title">
+                <h1>Court 3</h1>
+            </div>
             <div class="stream-card" id="twitch-embed3"></div>
         </div>
     </div>
-   
-    
 
     <script>
         new Twitch.Embed("twitch-embed1", {
             width: "100%",
             height: "500px",
             channel: "connsquash1",
-            parent: ["localhost"], // Update with your domain when live
+            parent: ["localhost"],
             layout: "video"
         });
 
@@ -251,7 +270,7 @@
             width: "100%",
             height: "500px",
             channel: "connsquash2",
-            parent: ["localhost"], // Update with your domain when live
+            parent: ["localhost"],
             layout: "video"
         });
 
@@ -259,12 +278,22 @@
             width: "100%",
             height: "500px",
             channel: "connsquash3",
-            parent: ["localhost"], // Update with your domain when live
+            parent: ["localhost"],
             layout: "video"
         });
+
+        // Toggle button functionality
+        const toggleButton = document.getElementById('toggle-layout');
+        const streamCards = document.getElementById('stream-cards');
+
+        toggleButton.addEventListener('click', () => {
+            streamCards.classList.toggle('side-by-side');
+            if (streamCards.classList.contains('side-by-side')) {
+                toggleButton.textContent = 'Switch to Row Format';
+            } else {
+                toggleButton.textContent = 'Switch to Side-by-Side';
+            }
+        });
     </script>
-
-    
-
 </body>
 </html>
