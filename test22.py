@@ -1,39 +1,26 @@
 import requests
 
-def test_api(url):
-    headers = {
-        "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/58.0.3029.110 Safari/537.3"
-        )
-    }
-    
-    print(f"Testing API: {url}")
-    try:
-        response = requests.get(url, headers=headers, timeout=10)
-        print("Status Code:", response.status_code)
-        if response.status_code == 200:
-            try:
-                data = response.json()
-                print("JSON Response:")
-                print(data)
-            except Exception as json_error:
-                print("Could not parse JSON:", json_error)
-        else:
-            print("API returned an error status.")
-    except Exception as error:
-        print("Error while testing API:", error)
-    print("-" * 40)
+# URL for the match
+match_id = "3499012"
+url = f"https://api.ussquash.com/resources/res/matches/{match_id}/liveScoreDetails"
 
-def main():
-    api_urls = [
-        "https://api.ussquash.com/resources/teams/40867/info/",
-        "https://api.ussquash.com/resources/teams/40867/players",
-        "https://api.ussquash.com/resources/teams/40867/schedule"
-    ]
-    for url in api_urls:
-        test_api(url)
+# Cookies from your browser
+cookies = {
+    "USSQ-API-SESSION": "s%3A2KCwXNuxA-R2GwhridQ7iVahv1J5aKQk.5hb8uDyRv6%2FvkSl2bKgkMsayoLZNX4Knp3SlOeYuG0E"
+}
 
-if __name__ == "__main__":
-    main()
+# Headers (to mimic a real browser)
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36",
+    "Accept": "application/json, text/javascript, */*; q=0.01",
+    "Referer": "https://www.ussquash.com/"  # Adjust if needed
+}
+
+# Make the request
+response = requests.get(url, headers=headers, cookies=cookies)
+
+# Print the response
+if response.status_code == 200:
+    print(response.json())  # Successfully retrieved data
+else:
+    print(f"Error {response.status_code}: {response.text}")

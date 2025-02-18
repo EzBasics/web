@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squash Scorecard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .scorecard {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            width: 300px;
+        }
+        .player {
+            font-size: 20px;
+            margin: 10px 0;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .controls {
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px;
+            margin: 5px;
+            border: none;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scorecard">
+        <h2>Squash Match</h2>
+        <div class="player" id="player1">🏅 Player 1</div>
+        <div class="score" id="score1">0</div>
+        <div class="controls">
+            <button onclick="updateScore(1, 1)">+1</button>
+            <button onclick="updateScore(1, -1)">-1</button>
+        </div>
+
+        <div class="player" id="player2">🎖 Player 2</div>
+        <div class="score" id="score2">0</div>
+        <div class="controls">
+            <button onclick="updateScore(2, 1)">+1</button>
+            <button onclick="updateScore(2, -1)">-1</button>
+        </div>
+    </div>
+
+    <script>
+        function updateScore(player, change) {
+            let scoreElement = document.getElementById('score' + player);
+            let currentScore = parseInt(scoreElement.innerText);
+            let newScore = Math.max(0, currentScore + change);
+            scoreElement.innerText = newScore;
+        }
+    </script>
+
+</body>
+</html>
