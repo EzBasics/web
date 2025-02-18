@@ -322,6 +322,9 @@ document.addEventListener("DOMContentLoaded", function() {
       container.innerHTML = "";
 
       players.forEach((player) => {
+        if (player.player.trim() === "Elkaliuoby, Adam") {
+          player.Rating = 6.3;
+        }
         const card = document.createElement("a");
         card.classList.add("player-card");
         card.href = `https://clublocker.com/users/${player.playerid}/home`;
