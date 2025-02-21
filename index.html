@@ -221,6 +221,53 @@
         font-size: 1.4rem;
       }
     }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+      text-align: center;
+      position: relative;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover, .close:focus {
+      color: black;
+    }
+    #visitProfileButton {
+      display: block;
+      margin: 20px auto 0;
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    #visitProfileButton:hover {
+      background: #0056b3;
+    }
   </style>
 </head>
 <body>
@@ -257,119 +304,158 @@
     </div>
   </div>
 
+  <!-- Bio Modal -->
+  <div id="bioModal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2 id="modalPlayerName">Player Bio</h2>
+      <p id="bioText">No bio available</p>
+      <button id="visitProfileButton">Visit Profile</button>
+    </div>
+  </div>
+
   <script>
-    // Toggle menu for mobile view
+    // Toggle menu for mobile view (if needed)
     function toggleMenu() {
       const menu = document.querySelector('.menu');
       menu.classList.toggle('active');
     }
   </script>
 
-
-
   <script>
-document.addEventListener("DOMContentLoaded", function() {
-  async function fetchTeamInfo() {
-    try {
-      const response = await fetch("https://api.ussquash.com/resources/teams/40867/info", {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-                        "AppleWebKit/537.36 (KHTML, like Gecko) " +
-                        "Chrome/58.0.3029.110 Safari/537.3"
+    document.addEventListener("DOMContentLoaded", function() {
+      let currentPlayerId = null;
+      const modal = document.getElementById("bioModal");
+      const closeModal = document.getElementById("closeModal");
+      const modalPlayerName = document.getElementById("modalPlayerName");
+      const bioText = document.getElementById("bioText");
+      const visitProfileButton = document.getElementById("visitProfileButton");
+
+      // Hard-coded bios with example entries
+      const bios = {
+        "68825": "BIO RIGHT HERE",
+        "170053": "BIO",
+        "11223": "Alice Cooper is recognized for her aggressive gameplay and excellent teamwork on the court.",
+        "44556": "Bob Brown consistently demonstrates exceptional skill and sportsmanship during every match."
+      };
+
+      async function fetchTeamInfo() {
+        try {
+          const response = await fetch("https://api.ussquash.com/resources/teams/40867/info", {
+            headers: {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+                            "AppleWebKit/537.36 (KHTML, like Gecko) " +
+                            "Chrome/58.0.3029.110 Safari/537.3"
+            }
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to fetch team info: ${response.status}`);
+          }
+          const teamInfo = await response.json();
+          return teamInfo[0]; // Return the first (and only) team object
+        } catch (error) {
+          console.error("Error fetching team info:", error);
+          return null;
         }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch team info: ${response.status}`);
       }
-
-      const teamInfo = await response.json();
-      return teamInfo[0]; // Return the first (and only) team object
-    } catch (error) {
-      console.error("Error fetching team info:", error);
-      return null;
-    }
-  }
-  
-  async function fetchAndDisplayPlayers() {
-    try {
-      const teamInfo = await fetchTeamInfo();
-
-      // Update the team name in the DOM
-      if (teamInfo) {
-        const teamNameElement = document.querySelector("h1");
-        teamNameElement.textContent = `${teamInfo.TeamName} Squash Team`;
-
-       
-      }
-
-      const response = await fetch("https://api.ussquash.com/resources/teams/40867/players", {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-                        "AppleWebKit/537.36 (KHTML, like Gecko) " +
-                        "Chrome/58.0.3029.110 Safari/537.3"
+      
+      async function fetchAndDisplayPlayers() {
+        try {
+          const teamInfo = await fetchTeamInfo();
+          // Update the team name in the DOM
+          if (teamInfo) {
+            const teamNameElement = document.querySelector("h1");
+            teamNameElement.textContent = `${teamInfo.TeamName} Squash Team`;
+          }
+          const response = await fetch("https://api.ussquash.com/resources/teams/40867/players", {
+            headers: {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
+                            "AppleWebKit/537.36 (KHTML, like Gecko) " +
+                            "Chrome/58.0.3029.110 Safari/537.3"
+            }
+          });
+          if (!response.ok) {
+            throw new Error(`Failed to fetch players data: ${response.status}`);
+          }
+          const players = await response.json();
+          players.sort((a, b) => parseInt(a.TeamPosition, 10) - parseInt(b.TeamPosition, 10));
+          const container = document.querySelector(".player-cards");
+          container.innerHTML = "";
+          players.forEach((player) => {
+            const card = document.createElement("a");
+            card.classList.add("player-card");
+            // Disable default link behavior
+            card.href = "#";
+            
+            const infoDiv = document.createElement("div");
+            infoDiv.classList.add("player-info");
+            
+            const img = document.createElement("img");
+            img.classList.add("profile-pic");
+            img.src = player.profilePictureUrl;
+            img.alt = player.player.trim();
+            
+            const detailsDiv = document.createElement("div");
+            detailsDiv.classList.add("player-details");
+            
+            const rankDiv = document.createElement("div");
+            rankDiv.classList.add("rank");
+            rankDiv.textContent = `#${player.TeamPosition}`;
+            
+            const nameH3 = document.createElement("h3");
+            nameH3.textContent = player.player.trim();
+            
+            const ratingP = document.createElement("p");
+            ratingP.classList.add("rating");
+            ratingP.innerHTML = `<strong>Rating:</strong> ${player.Rating}`;
+            
+            const wlP = document.createElement("p");
+            wlP.classList.add("rating");
+            wlP.innerHTML = `<strong>W/L:</strong> ${player.wins} - ${player.losses}`;
+            
+            detailsDiv.appendChild(rankDiv);
+            detailsDiv.appendChild(nameH3);
+            detailsDiv.appendChild(ratingP);
+            detailsDiv.appendChild(wlP);
+            
+            infoDiv.appendChild(img);
+            infoDiv.appendChild(detailsDiv);
+            card.appendChild(infoDiv);
+            container.appendChild(card);
+            
+            // Open modal with bio info when card is clicked
+            card.addEventListener("click", function(e) {
+              e.preventDefault();
+              currentPlayerId = player.playerid;
+              modalPlayerName.textContent = player.player.trim() + " Bio";
+              // Set bio from the hard-coded object, or a fallback message
+              bioText.textContent = bios[currentPlayerId] || "No bio provided for this player.";
+              // Show the modal
+              modal.style.display = "block";
+              
+              // Set the visit button's action
+              visitProfileButton.onclick = function() {
+                window.location.href = `https://clublocker.com/users/${currentPlayerId}/home`;
+              }
+            });
+          });
+        } catch (error) {
+          console.error("Error fetching players:", error);
         }
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch players data: ${response.status}`);
       }
-
-      const players = await response.json();
-      players.sort((a, b) => parseInt(a.TeamPosition, 10) - parseInt(b.TeamPosition, 10));
-
-      const container = document.querySelector(".player-cards");
-      container.innerHTML = "";
-
-      players.forEach((player) => {
-        const card = document.createElement("a");
-        card.classList.add("player-card");
-        card.href = `https://clublocker.com/users/${player.playerid}/home`;
-
-        const infoDiv = document.createElement("div");
-        infoDiv.classList.add("player-info");
-
-        const img = document.createElement("img");
-        img.classList.add("profile-pic");
-        img.src = player.profilePictureUrl;
-        img.alt = player.player.trim();
-
-        const detailsDiv = document.createElement("div");
-        detailsDiv.classList.add("player-details");
-
-        const rankDiv = document.createElement("div");
-        rankDiv.classList.add("rank");
-        rankDiv.textContent = `#${player.TeamPosition}`;
-
-        const nameH3 = document.createElement("h3");
-        nameH3.textContent = player.player.trim();
-
-        const ratingP = document.createElement("p");
-        ratingP.classList.add("rating");
-        ratingP.innerHTML = `<strong>Rating:</strong> ${player.Rating}`;
-
-        const wlP = document.createElement("p");
-        wlP.classList.add("rating");
-        wlP.innerHTML = `<strong>W/L:</strong> ${player.wins} - ${player.losses}`;
-
-        detailsDiv.appendChild(rankDiv);
-        detailsDiv.appendChild(nameH3);
-        detailsDiv.appendChild(ratingP);
-        detailsDiv.appendChild(wlP);
-
-        infoDiv.appendChild(img);
-        infoDiv.appendChild(detailsDiv);
-
-        card.appendChild(infoDiv);
-        container.appendChild(card);
-      });
-    } catch (error) {
-      console.error("Error fetching players:", error);
-    }
-  }
-
-  fetchAndDisplayPlayers();
-});
+      
+      // Modal close events
+      closeModal.onclick = function() {
+        modal.style.display = "none";
+      }
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+      
+      fetchAndDisplayPlayers();
+    });
   </script>
 </body>
 </html>
