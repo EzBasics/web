@@ -443,6 +443,7 @@
           console.error("Error fetching players:", error);
         }
       }
+<<<<<<< HEAD
       
       // Modal close events
       closeModal.onclick = function() {
@@ -456,6 +457,67 @@
       
       fetchAndDisplayPlayers();
     });
+=======
+
+      const players = await response.json();
+      players.sort((a, b) => parseInt(a.TeamPosition, 10) - parseInt(b.TeamPosition, 10));
+
+      const container = document.querySelector(".player-cards");
+      container.innerHTML = "";
+
+      players.forEach((player) => {
+        if (player.player.trim() === "Elkaliuoby, Adam") {
+          player.Rating = 6.3;
+        }
+        const card = document.createElement("a");
+        card.classList.add("player-card");
+        card.href = `https://clublocker.com/users/${player.playerid}/home`;
+
+        const infoDiv = document.createElement("div");
+        infoDiv.classList.add("player-info");
+
+        const img = document.createElement("img");
+        img.classList.add("profile-pic");
+        img.src = player.profilePictureUrl;
+        img.alt = player.player.trim();
+
+        const detailsDiv = document.createElement("div");
+        detailsDiv.classList.add("player-details");
+
+        const rankDiv = document.createElement("div");
+        rankDiv.classList.add("rank");
+        rankDiv.textContent = `#${player.TeamPosition}`;
+
+        const nameH3 = document.createElement("h3");
+        nameH3.textContent = player.player.trim();
+
+        const ratingP = document.createElement("p");
+        ratingP.classList.add("rating");
+        ratingP.innerHTML = `<strong>Rating:</strong> ${player.Rating}`;
+
+        const wlP = document.createElement("p");
+        wlP.classList.add("rating");
+        wlP.innerHTML = `<strong>W/L:</strong> ${player.wins} - ${player.losses}`;
+
+        detailsDiv.appendChild(rankDiv);
+        detailsDiv.appendChild(nameH3);
+        detailsDiv.appendChild(ratingP);
+        detailsDiv.appendChild(wlP);
+
+        infoDiv.appendChild(img);
+        infoDiv.appendChild(detailsDiv);
+
+        card.appendChild(infoDiv);
+        container.appendChild(card);
+      });
+    } catch (error) {
+      console.error("Error fetching players:", error);
+    }
+  }
+
+  fetchAndDisplayPlayers();
+});
+>>>>>>> d2875648cfbf6b949f9e7c1a165adc9838d402c3
   </script>
 </body>
 </html>
