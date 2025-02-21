@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 import requests
 
 app = Flask(__name__)
@@ -11,9 +11,18 @@ COOKIES = {
     "USSQ-API-SESSION": "s%3AnP8iOvjFv4N5MtnTsq2NikJ0DhzWUQAK.nDc6GCWcX6fO3ek%2FnAlrRf9WXQNfWbWivmwg9bAymqA"
 }
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def schedule():
-    return render_template("test.html")
+    if request.method == "POST":
+        # Get match_id from form submission; fall back to default if not provided.
+        match_id = request.form.get("match_id", DEFAULT_MATCH_ID)
+        # Redirect to the GET route with the match_id as a query parameter.
+        return redirect(url_for("schedule", match_id=match_id))
+    else:
+        # Retrieve match_id from query parameters (or use default)
+        match_id = request.args.get("match_id", DEFAULT_MATCH_ID)
+        # Pass the match_id to your template (e.g. to display it or use it in client-side JS)
+        return render_template("test.html", match_id=match_id)
 
 @app.route("/proxy/liveScoreDetails")
 def proxy_live_score_details():
@@ -27,4 +36,4 @@ def proxy_live_score_details():
     return jsonify(response.json())
 
 if __name__ == "__main__":
-    app.run(debug=True, port=3000)
+    app.run(debug=True)
